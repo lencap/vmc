@@ -1,0 +1,42 @@
+#!/bin/bash
+# getbindings
+# Get required './bindings/' files from latest VirtualBox SDK
+
+# Required binaries
+[[ -z "$(which curl)" ]] && { echo "Install curl" ; exit 1 ; }
+[[ -z "$(which unzip)" ]] && { echo "Install unzip" ; exit 1 ; }
+
+ThisDir=$PWD
+REPO="github.com:lencap/vmc"
+if [[ ! -f .git/config || -z $(grep "$REPO" ./.git/config) ]]; then
+    echo "Please run from working copy directory of $REPO"
+    exit 1
+fi 
+
+URL="http://download.virtualbox.org/virtualbox"
+Ver=$(curl -s $URL/LATEST.TXT)
+SDK=$(curl -s $URL/$Ver | grep -o "VirtualBoxSDK.*.zip\"")
+SDK=${SDK%?} # Remove that trailing quote
+
+curl -so /tmp/$SDK "$URL/$Ver/$SDK"
+RC=$?
+[[ "$RC" -ne "0" ]] && echo "Error downloading $URL/$Ver/$SDK" && exit 1
+
+# to-do: Add $URL/$Ver/SHA256SUMS check 
+
+rm -rf bindings
+
+# Extract only required subset of SDK
+cd /tmp/
+unzip -q $SDK 'sdk/bindings/c/glue/*'
+unzip -q $SDK 'sdk/bindings/c/include/*'
+unzip -q $SDK 'sdk/bindings/mscom/idl/*'
+unzip -q $SDK 'sdk/bindings/mscom/lib/*'
+unzip -q $SDK 'sdk/bindings/mscom/include/*'
+unzip -q $SDK 'sdk/bindings/xpcom/idl/*'
+unzip -q $SDK 'sdk/bindings/xpcom/lib/*'
+unzip -q $SDK 'sdk/bindings/xpcom/include/*'
+# Move to our repo working directory, and clean up
+mv sdk/bindings $ThisDir/ 
+rm -rf $SDK sdk
+
