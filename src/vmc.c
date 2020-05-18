@@ -14,6 +14,7 @@
 // Try to leverage common PrintVBoxException error msgs
 // Fix vmDelete Vbox UI bug - see vmdel.c
 // Use the proper Free8/Free16/FreeBST/free function
+// Bug: src/vmlist.c:82 VMList array error when listing no VMs
 
 // Global constants and variables
 const char prgver[]  = "v119";
