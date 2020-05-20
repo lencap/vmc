@@ -9,6 +9,7 @@
 // Allow multiple vmcopy and vmrun
 // Switch from BOOL to #include <stdbool.h> 
 // Use the proper Free8/Free16/FreeBST/free function
+// Don't mess with non-vmc VMs
 
 // Global constants and variables
 const char prgver[]  = "v120";
