@@ -4,6 +4,7 @@ vm
 vmc
 vmx
 vm.conf
+vmc*.tar.gz
 
 # macOS
 .DS_Store
