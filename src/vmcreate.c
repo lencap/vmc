@@ -57,23 +57,21 @@ IMachine * CreateVM(char *vmName, char *imgFile)
     
     // Create an empty IAppliance object
     IAppliance *appliance = NULL;
-    IVirtualBox_CreateAppliance(vbox, &appliance);
-    ExitIfNull(appliance, "IVirtualBox_CreateAppliance", __FILE__, __LINE__);
+    HRESULT rc = IVirtualBox_CreateAppliance(vbox, &appliance);
+    ExitIfFailure(rc, "IVirtualBox_CreateAppliance", __FILE__, __LINE__);    
 
     // Read OVA file into this IAppliance object
     BSTR imgFile_16;
     Convert8to16(imgFile, &imgFile_16);  // Convert imgFile path to API UTF16
     IProgress *progress = NULL;
-    HRESULT rc = IAppliance_Read(appliance, imgFile_16, &progress);
+    rc = IAppliance_Read(appliance, imgFile_16, &progress);
+    ExitIfFailure(rc, "IAppliance_Read", __FILE__, __LINE__);    
     FreeBSTR(imgFile_16);
     HandleProgress(progress, rc, -1);  // Note, rc is used here
 
     // Populate the VirtualSystemDescriptions object within the appliance object
     rc = IAppliance_Interpret(appliance);
-    if (FAILED(rc)) {
-        PrintVBoxException();
-        Exit(EXIT_FAILURE);
-    }
+    ExitIfFailure(rc, "IAppliance_Interpret", __FILE__, __LINE__);
 
     // Check for list of warnings during OVA interpretation of appliance
     ULONG warnCount = 0;
@@ -140,10 +138,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
     // since we never use those for development VMs, just SATA ones.
     rc = IVirtualSystemDescription_RemoveDescriptionByType(sysVSDList[0],
         VirtualSystemDescriptionType_HardDiskControllerIDE);
-    if (FAILED(rc)) {
-        PrintVBoxException();
-        Exit(EXIT_FAILURE);
-    }
+    ExitIfFailure(rc, "IVirtualSystemDescription_RemoveDescriptionByType", __FILE__, __LINE__);
 
     // Get the 5 individual VSD arrays that describe our sole sysVSDList[0] VM object
     ULONG vsdCount = 0;   // Virtual System Description entry index counter
@@ -157,7 +152,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
 
     // Create and inititialize our boolean Enable array
     BOOL *Enabled = malloc(sizeof(BOOL) * vsdCount);
-    ExitIfNull(Enabled, "malloc", __FILE__, __LINE__);
+    ExitIfNull(Enabled, __FILE__, __LINE__);
     // Start off assuming everything will be enabled, then selectibly disable in below for loop
     for (int i = 0; i < vsdCount; ++i) { Enabled[i] = TRUE; }
 
@@ -301,9 +296,9 @@ BSTR * getWarningsList(IAppliance *appliance, ULONG *Count)
     // Temp safe array to get list of these objects
     SAFEARRAY *SA = SAOutParamAlloc();
 
-    IAppliance_GetWarnings(appliance,
+    HRESULT rc = IAppliance_GetWarnings(appliance,
         ComSafeArrayAsOutIfaceParam(SA, PRUnichar *));
-    ExitIfNull(SA, "GetWarnings", __FILE__, __LINE__);    
+    ExitIfFailure(rc, "IAppliance_GetWarnings", __FILE__, __LINE__);    
     
     // REMINDER: Caller must free allocated memory
     BSTR *List = NULL;
@@ -321,9 +316,9 @@ IVirtualSystemDescription ** GetSysVSDList(IAppliance *appliance, ULONG *Count)
     // Temp safe array to get list of these objects
     SAFEARRAY *SA = SAOutParamAlloc();
 
-    IAppliance_GetVirtualSystemDescriptions(appliance,
+    HRESULT rc = IAppliance_GetVirtualSystemDescriptions(appliance,
         ComSafeArrayAsOutIfaceParam(SA, IVirtualSystemDescription *));
-    ExitIfNull(SA, "GetVirtualSystemDescriptions", __FILE__, __LINE__);   
+    ExitIfFailure(rc, "IAppliance_GetVirtualSystemDescriptions", __FILE__, __LINE__);   
 
     // Caller MUST release this array and its individual element objects when done.
     IVirtualSystemDescription **List = NULL;
@@ -350,17 +345,13 @@ void GetVSDArrays(IVirtualSystemDescription *sysDesc, ULONG *Count, ULONG **List
     IVirtualSystemDescription_GetCount(sysDesc, Count);
 
     // Get the the 5 description entries, store them in the each SA. See page 383/4 in SDK
-    IVirtualSystemDescription_GetDescription(sysDesc,
+    HRESULT rc = IVirtualSystemDescription_GetDescription(sysDesc,
         ComSafeArrayAsOutIfaceParam(SA1, ULONG),
         ComSafeArrayAsOutIfaceParam(SA2, BSTR),
         ComSafeArrayAsOutIfaceParam(SA3, BSTR),
         ComSafeArrayAsOutIfaceParam(SA4, BSTR),
         ComSafeArrayAsOutIfaceParam(SA5, BSTR)); 
-    ExitIfNull(SA1, "Types SA", __FILE__, __LINE__);   
-    ExitIfNull(SA2, "Refs SA", __FILE__, __LINE__);   
-    ExitIfNull(SA3, "OVFValues SA", __FILE__, __LINE__);   
-    ExitIfNull(SA4, "VBoxValues SA", __FILE__, __LINE__);   
-    ExitIfNull(SA5, "ExtraConfigValues SA", __FILE__, __LINE__);   
+    ExitIfFailure(rc, "IVirtualSystemDescription_GetDescription", __FILE__, __LINE__);
 
     // REMINDER: Caller must free allocated memory
 
@@ -400,9 +391,6 @@ void UpdateVSDArrays(IVirtualSystemDescription *sysDesc, ULONG Count,
     SAFEARRAY *SA1 = SACreateVector(VT_I4, 0, Count);     // List1 = Enabled
     SAFEARRAY *SA2 = SACreateVector(VT_BSTR, 0, Count);   // List2 = VBoxValues 
     SAFEARRAY *SA3 = SACreateVector(VT_BSTR, 0, Count);   // List3 = ExtraConfigValues
-    ExitIfNull(SA1, "Enabled SA", __FILE__, __LINE__);   
-    ExitIfNull(SA2, "VBoxValues SA", __FILE__, __LINE__);   
-    ExitIfNull(SA3, "ExtraConfigValues SA", __FILE__, __LINE__);
 
     // Copy C arrays into safe arrays, for passing as input parameters below
     SACopyInParamHelper(SA1, List1, Size1);
@@ -410,10 +398,11 @@ void UpdateVSDArrays(IVirtualSystemDescription *sysDesc, ULONG Count,
     SACopyInParamHelper(SA3, List3, Size3);
 
     // Call setFinalValues to register update VSD values for this VM
-    IVirtualSystemDescription_SetFinalValues(sysDesc,
+    HRESULT rc = IVirtualSystemDescription_SetFinalValues(sysDesc,
         ComSafeArrayAsInParam(SA1),
         ComSafeArrayAsInParam(SA2),
         ComSafeArrayAsInParam(SA3));
+    ExitIfFailure(rc, "IVirtualSystemDescription_SetFinalValues", __FILE__, __LINE__);
     SADestroy(SA1);
     SADestroy(SA2);
     SADestroy(SA3);

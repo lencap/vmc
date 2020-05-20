@@ -14,7 +14,10 @@ int vmInfo(int argc, char *argv[])
 
     // Get VM object
     IMachine *vm = GetVM(vmName);
-    ExitIfNull(vm, "", "", 0);
+    if (!vm) {
+        printf("VM '%s' is not registered\n", vmName);
+        Exit(EXIT_FAILURE);
+    }
 
     // Print the most important additional VM attributes
     
@@ -89,9 +92,9 @@ IStorageController ** getCtlrList(IMachine *vm, ULONG *Count)
     // Temp safe array to get list of these objects
     SAFEARRAY *SA = SAOutParamAlloc();
 
-    IMachine_GetStorageControllers(vm,
+    HRESULT rc = IMachine_GetStorageControllers(vm,
         ComSafeArrayAsOutIfaceParam(SA, IStorageController *));
-    ExitIfNull(SA, "GetStorageControllers", __FILE__, __LINE__);
+    ExitIfFailure(rc, "IMachine_GetStorageControllers", __FILE__, __LINE__);
 
     // REMINDER: List object and elements must be freed by caller
     IStorageController **List = NULL;

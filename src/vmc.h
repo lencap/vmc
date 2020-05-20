@@ -111,18 +111,16 @@ void Exit(int rc);
 int isDir(const char *path);
 int isFile(const char *path);
 BOOL Equal(const char *str1, const char *str2);
-BOOL iEqual(const char *str1, const char *str2);
-int striCmp(char const *a, char const *b);
 void Lower(char *str);
 bool endsWith(const char *str1, const char *str2);
-char * strTail(char *str, int n);
 void argCopy(char *name, int length, char *arg);
 char ** strSplit(char *String, char DELIMITER, int *Count);
 long int fileSize(char *path);
 bool isTarFile(const char *path);
 char * baseName(char *path);
 int copyFile(const char *path1, const char *path2);
-int ExitIfNull(void *pointer, const char *funcName, const char *fileName, int lineNum);
+void ExitIfNull(void *ptr, const char *path, int line);
+void ExitIfFailure(HRESULT rc, const char *msg, const char *path, int line);
 char * TimeNow(void);
 void DEBUG(char *msg);
 char * NewString(int size);
@@ -146,7 +144,7 @@ BOOL ActiveIP(char *ip);
 
 // netlist.c
 void netList(void);
-void getNICList(IHostNetworkInterface ***List, ULONG *Count);
+void GetNICList(IHostNetworkInterface ***List, ULONG *Count);
 char * getHostMainNIC(void);
 
 // netadd.c
@@ -174,7 +172,7 @@ IMediumAttachment ** getMAList(IMachine *vm, ULONG *Count);
 
 // vminfo-folders.c
 int printSharedFolders(IMachine *vm);
-ISharedFolder **getSFList(IMachine *vm, ULONG *Count);
+ISharedFolder ** getSFList(IMachine *vm, ULONG *Count);
 
 // nettype.c
 void netType(int argc, char *argv[]);

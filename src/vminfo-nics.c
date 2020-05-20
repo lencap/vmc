@@ -67,9 +67,9 @@ int printNetworkAdapters(IMachine *vm)
 
             // Temp safe array for the port-pwd list
             SAFEARRAY *pfRulesSA = SAOutParamAlloc();
-            INATEngine_GetRedirects(natEng,
+            HRESULT rc = INATEngine_GetRedirects(natEng,
                 ComSafeArrayAsOutTypeParam(pfRulesSA, BSTR));
-            ExitIfNull(pfRulesSA, "pfRulesSA SA", __FILE__, __LINE__); 
+            ExitIfFailure(rc, "INATEngine_GetRedirects", __FILE__, __LINE__);
 
             BSTR *pfRules = NULL;
             ULONG bPfCount = 0;

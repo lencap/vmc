@@ -269,7 +269,7 @@ const char ** ini_GetSections(ini_t *ini, int *count)
 
     // Allocate memory for it
     const char **sections = malloc(*count * sizeof(char *));
-    ExitIfNull(sections, "malloc", __FILE__, __LINE__);
+    ExitIfNull(sections, __FILE__, __LINE__);
 
     int i = 0;
     while (token < ini->end) {

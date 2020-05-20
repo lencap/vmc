@@ -99,14 +99,14 @@ void ProvisionConfig(char *provFile)
 
         // #1 name (Mandatory). Same as the section name
         char *vmName = malloc(sizeof(char) * strlen(sections[i]) + 1);
-        ExitIfNull(vmName, "malloc", __FILE__, __LINE__);
+        ExitIfNull(vmName, __FILE__, __LINE__);
         strcpy(vmName, sections[i]);
         printf("[%s] Provisioning this VM\n", vmName);
 
         // #2 image (Mandatory)
         const char *image = ini_get(cfg, sections[i], "image");
         char *vmImg = malloc(sizeof(char) * strlen(image) + 1);
-        ExitIfNull(vmImg, "malloc", __FILE__, __LINE__);
+        ExitIfNull(vmImg, __FILE__, __LINE__);
         strcpy(vmImg, image);
         char vmImgPath[1024] = "";
         sprintf(vmImgPath, "%s%s%s", vmhome, PATHSEPSTR, vmImg);

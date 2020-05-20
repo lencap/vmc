@@ -34,7 +34,10 @@ void imgCreate(int argc, char *argv[])
 
     // Get VM object
     IMachine *vm = GetVM(vmName);
-    ExitIfNull(vm, "", "", 0);
+    if (!vm) {
+        printf("VM '%s' is not registered\n", vmName);
+        Exit(EXIT_FAILURE);
+    }
 
     // See if it's running
     if (VMState(vm) == MachineState_Running) {
@@ -44,8 +47,8 @@ void imgCreate(int argc, char *argv[])
 
     // Creating an OVA = Creating an empty IAppliance object and exporting VM to it
     IAppliance *appliance = NULL;
-    IVirtualBox_CreateAppliance(vbox, &appliance);
-    ExitIfNull(appliance, "CreateAppliance", __FILE__, __LINE__);
+    HRESULT rc = IVirtualBox_CreateAppliance(vbox, &appliance);
+    ExitIfFailure(rc, "IVirtualBox_CreateAppliance", __FILE__, __LINE__);
 
     BSTR imgFile_16;
     Convert8to16(imgFile, &imgFile_16);  // Convert imgFile to API 16bit char format
@@ -53,8 +56,8 @@ void imgCreate(int argc, char *argv[])
     // Each exportTo call can add another VM to sysDesc array, but we
     // only care to define one (1) VM in this program (sysDesc[0])
     IVirtualSystemDescription *sysDesc = NULL;
-    IMachine_ExportTo(vm, appliance, imgFile_16, &sysDesc);
-    ExitIfNull(sysDesc, "ExportTo", __FILE__, __LINE__);
+    rc = IMachine_ExportTo(vm, appliance, imgFile_16, &sysDesc);
+    ExitIfFailure(rc, "IMachine_ExportTo", __FILE__, __LINE__);
 
     // FUTURE OPTION
     // Here we could override any VirtualSystemDescriptionType value for each VM
@@ -76,7 +79,7 @@ void imgCreate(int argc, char *argv[])
     BSTR format_16;
     Convert8to16(format, &format_16);
     IProgress *progress = NULL;
-    HRESULT rc = IAppliance_Write(appliance,
+    rc = IAppliance_Write(appliance,
         format_16,
         ComSafeArrayAsInParam(OptionsSA),
         imgFile_16,

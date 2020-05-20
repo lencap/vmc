@@ -21,16 +21,13 @@ int printGuestAdditionProps(IMachine *vm)
     SAFEARRAY *timeSA  = SAOutParamAlloc();
     SAFEARRAY *flagSA  = SAOutParamAlloc();
 
-    IMachine_EnumerateGuestProperties(vm,
+    HRESULT rc = IMachine_EnumerateGuestProperties(vm,
         NULL,    // A NULL filter returns all properties
         ComSafeArrayAsOutTypeParam(nameSA, BSTR),
         ComSafeArrayAsOutTypeParam(valueSA, BSTR),
         ComSafeArrayAsOutTypeParam(timeSA, PRInt64),
         ComSafeArrayAsOutTypeParam(flagSA, BSTR));
-    ExitIfNull(nameSA, "Name SA", __FILE__, __LINE__);     
-    ExitIfNull(valueSA, "Value SA", __FILE__, __LINE__);     
-    ExitIfNull(timeSA, "Time SA", __FILE__, __LINE__);     
-    ExitIfNull(flagSA, "Flag SA", __FILE__, __LINE__);     
+    ExitIfFailure(rc, "IMachine_EnumerateGuestProperties", __FILE__, __LINE__);     
 
     // We only care about name/value pair, so destroy timestamp and flag SAs now
     SADestroy(timeSA);

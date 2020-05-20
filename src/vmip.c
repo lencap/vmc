@@ -72,14 +72,14 @@ bool SetVMIP(IMachine *vm, char *ip)
         // BRIDGED NETWORKING
         // DISABLE enp0s3 w/ Null. No networking
         INetworkAdapter *nic0 = NULL;
-        IMachine_GetNetworkAdapter(vmMuta, 0, &nic0);
-        ExitIfNull(nic0, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
+        HRESULT rc = IMachine_GetNetworkAdapter(vmMuta, 0, &nic0);
+        ExitIfFailure(rc, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
         INetworkAdapter_SetEnabled(nic0, FALSE);
 
         // ENABLE enp0s8 w/ Bridge networking. Real-world access (assumes local admin privs)
         INetworkAdapter *nic1 = NULL;
-        IMachine_GetNetworkAdapter(vmMuta, 1, &nic1);
-        ExitIfNull(nic1, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
+        rc = IMachine_GetNetworkAdapter(vmMuta, 1, &nic1);
+        ExitIfFailure(rc, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
         INetworkAdapter_SetEnabled(nic1, TRUE);
         INetworkAdapter_SetAdapterType(nic1, NetworkAdapterType_Virtio);
         INetworkAdapter_SetAttachmentType(nic1, NetworkAttachmentType_Bridged);
@@ -89,12 +89,8 @@ bool SetVMIP(IMachine *vm, char *ip)
         BSTR mainNIC_16;
         Convert8to16(mainNIC, &mainNIC_16);
 
-        HRESULT rc = INetworkAdapter_SetBridgedInterface(nic1, mainNIC_16);
-        if (FAILED(rc)) {
-            fprintf(stderr, "%s:%d INetworkAdapter_SetBridgedInterface error\n", __FILE__, __LINE__);
-            PrintVBoxException();
-            Exit(EXIT_FAILURE);
-        }
+        rc = INetworkAdapter_SetBridgedInterface(nic1, mainNIC_16);
+        ExitIfFailure(rc, "INetworkAdapter_SetBridgedInterface", __FILE__, __LINE__);
         FreeBSTR(mainNIC_16);
         free(mainNIC);
     }
@@ -102,21 +98,21 @@ bool SetVMIP(IMachine *vm, char *ip)
         // HOSTONLY NETWORKING
         // ENABLE enp0s3 w/ NAT networking, to access external world, and no SSH port forwarding
         INetworkAdapter *nic0 = NULL;
-        IMachine_GetNetworkAdapter(vmMuta, 0, &nic0);
-        ExitIfNull(nic0, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
+        HRESULT rc = IMachine_GetNetworkAdapter(vmMuta, 0, &nic0);
+        ExitIfFailure(rc, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
         INetworkAdapter_SetEnabled(nic0, TRUE);
         INetworkAdapter_SetAdapterType(nic0, NetworkAdapterType_Virtio);
         INetworkAdapter_SetAttachmentType(nic0, NetworkAttachmentType_NAT);
         INATEngine *natEng = NULL;
-        INetworkAdapter_GetNATEngine(nic0, &natEng);
-        ExitIfNull(natEng, "INetworkAdapter_GetNATEngine", __FILE__, __LINE__);
+        rc = INetworkAdapter_GetNATEngine(nic0, &natEng);
+        ExitIfFailure(rc, "INetworkAdapter_GetNATEngine", __FILE__, __LINE__);
         INATEngine_SetDNSPassDomain(natEng, TRUE);
         INATEngine_SetDNSUseHostResolver(natEng, TRUE);
 
         // ENABLE enp0s8 w/ HostOnly networking. Network connectivity between VMs only
         INetworkAdapter *nic1 = NULL;
-        IMachine_GetNetworkAdapter(vmMuta, 1, &nic1);
-        ExitIfNull(nic1, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
+        rc = IMachine_GetNetworkAdapter(vmMuta, 1, &nic1);
+        ExitIfFailure(rc, "IMachine_GetNetworkAdapter", __FILE__, __LINE__);
         INetworkAdapter_SetEnabled(nic1, TRUE);
         INetworkAdapter_SetAdapterType(nic1, NetworkAdapterType_Virtio);
         INetworkAdapter_SetAttachmentType(nic1, NetworkAttachmentType_HostOnly);
@@ -127,7 +123,7 @@ bool SetVMIP(IMachine *vm, char *ip)
         // Get all interfaces and loop through them
         ULONG nicCount = 0;
         IHostNetworkInterface **nicList = NULL;
-        getNICList(&nicList, &nicCount);
+        GetNICList(&nicList, &nicCount);
 
         if (!nicCount) {
             fprintf(stderr, "This host has no NICs??");
@@ -180,9 +176,10 @@ bool SetVMIP(IMachine *vm, char *ip)
         // Set the HostOnly interface name
         BSTR newHOName_16;
         Convert8to16(newHOName, &newHOName_16);
-        HRESULT rc = INetworkAdapter_SetHostOnlyInterface(nic1, newHOName_16);
+        rc = INetworkAdapter_SetHostOnlyInterface(nic1, newHOName_16);
         if (FAILED(rc)) {
-            fprintf(stderr, "%s:%d INetworkAdapter_SetHostOnlyInterface error\n", __FILE__, __LINE__);
+            fprintf(stderr, "%s:%d INetworkAdapter_SetHostOnlyInterface error\n",
+                __FILE__, __LINE__);
             PrintVBoxException();
             return false;
         }

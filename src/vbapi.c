@@ -23,29 +23,29 @@ void InitGlobalObjects(void) {
     }
 
     // Get and set IVirtualBoxClient global instance
-    g_pVBoxFuncs->pfnClientInitialize(NULL, &vboxclient);
+    HRESULT rc = g_pVBoxFuncs->pfnClientInitialize(NULL, &vboxclient);
     // pfnClientInitialize does all the necessary startup action and should
     // provide above requested IVirtualBoxClient instance. When all is done
     // is should be matched by a call to g_pVBoxFuncs->pfnClientUninitialize().
-    ExitIfNull(vboxclient, "g_pVBoxFuncs->pfnClientInitialize", __FILE__, __LINE__);
+    ExitIfFailure(rc, "g_pVBoxFuncs->pfnClientInitialize", __FILE__, __LINE__);
 
     // Get and set IVirtualBox global instance
-    IVirtualBoxClient_GetVirtualBox(vboxclient, &vbox);
-    ExitIfNull(vbox, "GetVirtualBox", __FILE__, __LINE__);
+    rc = IVirtualBoxClient_GetVirtualBox(vboxclient, &vbox);
+    ExitIfFailure(rc, "IVirtualBoxClient_GetVirtualBox", __FILE__, __LINE__);
 
     // Get and set ISystemProperties global instance
-    IVirtualBox_GetSystemProperties(vbox, &sysprop);
-    ExitIfNull(sysprop, "GetSystemProperties", __FILE__, __LINE__);
+    rc = IVirtualBox_GetSystemProperties(vbox, &sysprop);
+    ExitIfFailure(rc, "IVirtualBox_GetSystemProperties", __FILE__, __LINE__);
 
     // Get and set IHost global instance
-    IVirtualBox_GetHost(vbox, &ihost);
-    ExitIfNull(ihost, "GetHost", __FILE__, __LINE__);
+    rc = IVirtualBox_GetHost(vbox, &ihost);
+    ExitIfFailure(rc, "IVirtualBox_GetHost", __FILE__, __LINE__);
 
     // Get and set default MachineFolder
     BSTR vbhome_16 = NULL;
     // Unfortunately, the API defaults to using UTF16 char encoding
-    ISystemProperties_GetDefaultMachineFolder(sysprop, &vbhome_16);
-    ExitIfNull(vbhome_16, "GetDefaultMachineFolder", __FILE__, __LINE__);
+    rc = ISystemProperties_GetDefaultMachineFolder(sysprop, &vbhome_16);
+    ExitIfFailure(rc, "ISystemProperties_GetDefaultMachineFolder", __FILE__, __LINE__);
     Convert16to8(vbhome_16, &vbhome);   // Transfer to UTF8 global variable
     FreeBSTR(vbhome_16);
 
@@ -136,8 +136,7 @@ void HandleProgress(IProgress *progress, HRESULT rc, PRInt32 Timeout)
 {
     // Using VBOX API call return code
     if (FAILED(rc)) {
-        // Print exception text relevant to calling function
-        PrintVBoxException();
+        PrintVBoxException();   // Print exceptions if any
         return;
     }
 
@@ -150,9 +149,7 @@ void HandleProgress(IProgress *progress, HRESULT rc, PRInt32 Timeout)
         usleep(100000);  // Do nothing for .1 second
         --delay;
         rc = IProgress_GetCompleted(progress, &completed);
-        if (FAILED(rc)) {
-            fprintf(stderr, "%s:%d IProgress_GetCompleted error\n", __FILE__, __LINE__);
-        }
+        ExitIfFailure(rc, "IProgress_GetCompleted", __FILE__, __LINE__);
     }
 
     // By this time it should have completed
@@ -204,27 +201,22 @@ ISession * GetSession(IMachine *vm, PRUint32 lockType, IMachine **vmMuta)
 
     // Allocate memory for a new Session pointer that will survive this function
     ISession *session = malloc(sizeof(ISession*));
-    ExitIfNull(session, "malloc", __FILE__, __LINE__);
+    ExitIfNull(session, __FILE__, __LINE__);
     // REMINDER: Caller must free allocated memory
     
     // Get a new ISession object and store it in above pointer
-    IVirtualBoxClient_GetSession(vboxclient, &session);
-    ExitIfNull(session, "GetSession", __FILE__, __LINE__);
+    HRESULT rc = IVirtualBoxClient_GetSession(vboxclient, &session);
+    ExitIfFailure(rc, "IVirtualBoxClient_GetSession", __FILE__, __LINE__);
 
     if (lockType == LockType_Null) { return session; }  // Type1 request, we're done
 
     // Write lock the given VM
-    HRESULT rc = IMachine_LockMachine(vm, session, lockType);
-    // Doesn't appear we can use ExitIfNull() here
-    if (FAILED(rc)) {
-        fprintf(stderr, "%s:%d IMachine_LockMachine error\n", __FILE__, __LINE__);
-        PrintVBoxException();
-        Exit(EXIT_FAILURE);
-    }
+    rc = IMachine_LockMachine(vm, session, lockType);
+    ExitIfFailure(rc, "IMachine_LockMachine", __FILE__, __LINE__);
 
     // Get handle to the mutable copy
-    ISession_GetMachine(session, vmMuta);
-    ExitIfNull(vmMuta, "GetMachine", __FILE__, __LINE__);
+    rc = ISession_GetMachine(session, vmMuta);
+    ExitIfFailure(rc, "ISession_GetMachine", __FILE__, __LINE__);
 
     return session;
 }

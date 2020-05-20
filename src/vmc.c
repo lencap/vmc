@@ -4,20 +4,14 @@
 #include "vmc.h"
 
 // @todo
-// Much to optimize and do better
 // Allow easy switching/update of username and ssh key
 // Allow direct file transfer between VMs
 // Allow multiple vmcopy and vmrun
-// Document the code a little better
 // Switch from BOOL to #include <stdbool.h> 
-// Remove strTail in not using
-// Try to leverage common PrintVBoxException error msgs
-// Fix vmDelete Vbox UI bug - see vmdel.c
 // Use the proper Free8/Free16/FreeBST/free function
-// Bug: src/vmlist.c:82 VMList array error when listing no VMs
 
 // Global constants and variables
-const char prgver[]  = "v119";
+const char prgver[]  = "v120";
 const char prgname[] = "vmc";
 const char vmconf[]  = "vm.conf";         // Default provisioning filename
 const char vmdefip[] = "10.11.12.2";      // Default IP address

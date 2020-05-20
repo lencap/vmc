@@ -20,7 +20,10 @@ int vmSSH(int argc, char *argv[])
 
     // Get VM object
     IMachine *vm = GetVM(vmName);
-    ExitIfNull(vm, "", "", 0);
+    if (!vm) {
+        printf("VM '%s' is not registered\n", vmName);
+        Exit(EXIT_FAILURE);
+    }
 
     // See if it's running
     if (VMState(vm) != MachineState_Running) {
@@ -128,7 +131,10 @@ int SCPVM(char *srcPath, char *vmName, char *dstPath, bool verbose)
     
     // Get VM object
     IMachine *vm = GetVM(vmName);
-    ExitIfNull(vm, "", "", 0);
+    if (!vm) {
+        printf("VM '%s' is not registered\n", vmName);
+        return 1;
+    }
 
     // See if it's running
     if (VMState(vm) != MachineState_Running) {

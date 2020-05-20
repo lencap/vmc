@@ -8,7 +8,7 @@ void netList(void)
     // Get list of NICs
     ULONG nicCount = 0;
     IHostNetworkInterface **nicList = NULL;
-    getNICList(&nicList, &nicCount);
+    GetNICList(&nicList, &nicCount);
 
     if (!nicCount) {
         fprintf(stderr, "This host has no NICs??");
@@ -79,14 +79,14 @@ void netList(void)
 
 
 // Get list of NICs on this host
-void getNICList(IHostNetworkInterface ***List, ULONG *Count)
+void GetNICList(IHostNetworkInterface ***List, ULONG *Count)
 {
     // Temp safe array to get list of these objects
     SAFEARRAY *SA = SAOutParamAlloc();
 
-    IHost_GetNetworkInterfaces(ihost,
+    HRESULT rc = IHost_GetNetworkInterfaces(ihost,
         ComSafeArrayAsOutIfaceParam(SA, IHostNetworkInterface *));
-    ExitIfNull(SA, "GetNetworkInterfaces", __FILE__, __LINE__);
+    ExitIfFailure(rc, "GetNetworkInterfaces", __FILE__, __LINE__);
 
     // REMINDER: Caller must free allocated memory
 
@@ -107,7 +107,7 @@ char * getHostMainNIC(void)
     // Get list of all NICs on this host
     ULONG nicCount = 0;
     IHostNetworkInterface **nicList = NULL;
-    getNICList(&nicList, &nicCount);
+    GetNICList(&nicList, &nicCount);
 
     if (!nicCount) {
         fprintf(stderr, "FATAL. This host has no NICs??");

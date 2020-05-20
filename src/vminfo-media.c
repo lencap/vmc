@@ -88,9 +88,9 @@ IMediumAttachment ** getMAList(IMachine *vm, ULONG *Count)
     // Temp safe array for the media attachment list
     SAFEARRAY *ListSA = SAOutParamAlloc();
 
-    IMachine_GetMediumAttachments(vm,
+    HRESULT rc = IMachine_GetMediumAttachments(vm,
         ComSafeArrayAsOutIfaceParam(ListSA, IMediumAttachment *));
-    ExitIfNull(ListSA, "medium attach SA", __FILE__, __LINE__); 
+    ExitIfFailure(rc, "IMachine_GetMediumAttachments", __FILE__, __LINE__); 
 
     // REMINDER: Caller must free allocated memory
     IMediumAttachment **List = NULL;

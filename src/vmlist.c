@@ -71,15 +71,15 @@ void UpdateVMList(void)
     SAFEARRAY *SA = SAOutParamAlloc();
 
     // Get list and store in SA
-    IVirtualBox_GetMachines(vbox,
+    HRESULT rc = IVirtualBox_GetMachines(vbox,
         ComSafeArrayAsOutIfaceParam(SA, IMachine *));
-    ExitIfNull(SA, "VMList SA", __FILE__, __LINE__);
+    ExitIfFailure(rc, "VMList SA", __FILE__, __LINE__);
     
     FreeVMList();  // Release existing one in memory
 
     // Transfer from safe array to regular array, updating counter 
-    SACopyOutIfaceParamHelper((IUnknown ***)&VMList, &VMListCount, SA);
-    ExitIfNull(VMList, "VMList array", __FILE__, __LINE__);
+    rc = SACopyOutIfaceParamHelper((IUnknown ***)&VMList, &VMListCount, SA);
+    ExitIfFailure(rc, "VMList array", __FILE__, __LINE__);
     SADestroy(SA);
 }
 

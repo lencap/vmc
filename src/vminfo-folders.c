@@ -62,9 +62,9 @@ ISharedFolder **getSFList(IMachine *vm, ULONG *Count)
     // Temp safe array to get list of these objects
     SAFEARRAY *ListSA = SAOutParamAlloc();
 
-    IMachine_GetSharedFolders(vm,
+    HRESULT rc = IMachine_GetSharedFolders(vm,
         ComSafeArrayAsOutIfaceParam(ListSA, ISharedFolder *));
-    ExitIfNull(ListSA, "GetSharedFolders SA", __FILE__, __LINE__);          
+    ExitIfFailure(rc, "IMachine_GetSharedFolders", __FILE__, __LINE__);
 
     // REMINDER: Caller must free allocated memory
     ISharedFolder **List = NULL;

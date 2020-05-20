@@ -28,7 +28,10 @@ void vmDelete(int argc, char *argv[])
 
     // Get VM object
     IMachine *vm = GetVM(vmName);
-    ExitIfNull(vm, "", "", 0);
+    if (!vm) {
+        printf("VM '%s' is not registered\n", vmName);
+        Exit(EXIT_FAILURE);
+    }
 
     // Stop it if it is running
     if (VMState(vm) == MachineState_Running) { StopVM(vm); }
@@ -42,7 +45,7 @@ void vmDelete(int argc, char *argv[])
         // 3 = CleanupMode_DetachAllReturnHardDisksOnly
         // 4 = CleanupMode_Full
         ComSafeArrayAsOutIfaceParam(SA, IMedium *));
-    ExitIfNull(SA, "Media List SA", __FILE__, __LINE__);  
+    ExitIfFailure(rc, "IMachine_Unregister", __FILE__, __LINE__);  
 
     // Delete VM configuration, using returned media list SafeArray
     IProgress *progress;

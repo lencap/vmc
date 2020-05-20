@@ -44,27 +44,6 @@ BOOL Equal(const char *str1, const char *str2)
 }
 
 
-// Returns 1 if case-insensitive comparison is true  
-BOOL iEqual(const char *str1, const char *str2)
-{
-    if (!str1 || !str2) { return FALSE; }
-    // Syntactic sugar reduces useless cognitive load
-    if (striCmp(str1, str2) == 0) { return TRUE; }
-    else { return FALSE; }
-}
-
-
-// My own stricmp. Returns 0 if case-insensitive comparison is true 
-int striCmp(char const *a, char const *b)
-{
-    if (!a || !b) { return 1; }
-    for (;; a++, b++) {
-        int d = tolower((unsigned char)*a) - tolower((unsigned char)*b);
-        if (d != 0 || !*a) { return d; }
-    }
-}
-
-
 // Converts string to lowercase
 void Lower(char *str)
 {
@@ -88,34 +67,6 @@ bool endsWith(const char *str1, const char *str2)
        --l1; --l2;
     }
     return true;
-}
-
-
-// Return last n characters of a string
-char * strTail(char *str, int n)
-{
-    if (!str) { return NULL; }
-
-    int end = strlen(str);   // First, how long is the string 
-    if (n > end) {    // If n is longer than the string, then chop it to be the same
-        n = end;      // length as the string, effectively making this a malloc'd strcpy
-    }
-    if (n < 1) { return NULL; }   // Just in case
-
-    // For why we're not casting malloc() see John Bode's 2011 great response:
-    // https://stackoverflow.com/questions/7652293/how-do-i-dynamically-allocate-an-array-of-strings-in-c
-    // It's not required with modern, (post 1989), C compilers; and can actually hinder debugging.
-    // If you're doing C++ then it IS REQUIRED. 
-
-    // Dynamically allocate the space for our target
-    char *tail = NewString(n);
-
-    // Walk and copy the last n characters
-    int start = end - n;
-    int i = 0, j = start;
-    for (; j < end; i++, j++) { tail[i] = str[j]; }
-    tail[i] = '\0';   // Lest we forget to terminate our substring
-    return tail;
 }
 
 
@@ -152,7 +103,7 @@ char ** strSplit(char *String, char DELIMITER, int *Count)  // Option1
 
     // Allocate memory for the base array of strings, type (char **)
     char **List = malloc(*Count * sizeof(char **));
-    ExitIfNull(List, "malloc", __FILE__, __LINE__);
+    ExitIfNull(List, __FILE__, __LINE__);
 
     // Build each individual string element in the base array list
     char Element[32] = "";   // Assume elements will never exceed 32 chars width
@@ -279,18 +230,27 @@ int copyFile(const char *path1, const char *path2)
 }
 
 
-// Null pointer checker. Exit if it's NULL
-int ExitIfNull(void *pointer, const char *funcName, const char *fileName, int lineNum)
+// Exit if malloc returns NULL
+void ExitIfNull(void *ptr, const char *path, int line)
 {
-    if (!pointer) {
-        // Print location and function if they were sent
-        if (funcName && fileName && lineNum) {
-            fprintf(stderr, "%s:%d %s error\n", fileName, lineNum, funcName);
-        }
-        PrintVBoxException();  // Silent, unless there's actual API errors to report
-        Exit(EXIT_FAILURE);
+    if (ptr) { return; }   // Return if it's good
+    if (path && line) {
+        fprintf(stderr, "%s:%d malloc error\n", path, line);
     }
-    return 0;
+    PrintVBoxException();  // Print API errors if any
+    Exit(EXIT_FAILURE);
+}
+
+
+// Exit if return code shows failure
+void ExitIfFailure(HRESULT rc, const char *msg, const char *path, int line)
+{
+    if (SUCCEEDED(rc)) { return; }   // Return if it's good
+    if (msg && path && line) {
+        fprintf(stderr, "%s:%d %s error\n", path, line, msg);
+    }
+    PrintVBoxException();  // Print API errors if any
+    Exit(EXIT_FAILURE);
 }
 
 
@@ -337,7 +297,7 @@ char * NewString(int size)
         Exit(EXIT_FAILURE);
     }
     char *string = malloc(sizeof(char) * size);
-    ExitIfNull(string, "malloc", __FILE__, __LINE__);
+    ExitIfNull(string, __FILE__, __LINE__);
     // REMINDER: Caller must free allocated memory
     return string;
 }
