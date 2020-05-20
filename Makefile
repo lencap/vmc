@@ -22,7 +22,7 @@ OBJECTS    := $(addprefix $(BUILDDIR)/,$(notdir $(SOURCES:.c=.o)))
 
 CC         := gcc
 CFLAGS     := -Wall -std=c99 -g
-LDFLAGS    := -ldl -lpthread
+LDFLAGS    := -ldl -lpthread -lm
 INC        := $(VBOXINC)
 
 # Link

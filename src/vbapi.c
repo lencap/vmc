@@ -10,7 +10,8 @@ void InitGlobalObjects(void) {
         // available g_pVBoxFuncs, which is a pointer to the VBOXCAPI function table.
         // When all's done, this should be matched by a call to corresponding VBoxCGlueTerm.
         // We do that in the Exit() function.
-        fprintf(stderr, "VBoxCGlueInit failed:\n%s\n", g_szVBoxErrMsg);
+        fprintf(stderr, "VBoxCGlueInit failed:\n%s\n"
+            "Is VirtualBox installed?\n", g_szVBoxErrMsg);
         Exit(EXIT_FAILURE);
     }
 
