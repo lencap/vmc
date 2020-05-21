@@ -6,7 +6,7 @@
 void CreateSSHKeys(void)
 {
     // Create private SSH key file, and assign path to vmsshpri
-    sprintf(vmsshpri, "%s%s%s", vmhome, PATHSEPSTR, sshpri);  // Global vars
+    sprintf(vmsshpri, "%s%c%s", vmhome, PATHCHAR, sshpri);  // Global vars
     FILE *fp;
     fp = fopen(vmsshpri, "w");
     if (!fp) {
@@ -50,7 +50,7 @@ void CreateSSHKeys(void)
     // Create public SSH key file, from private
     char vmsshpub[256];
     char cmd[256];
-    sprintf(vmsshpub, "%s%s%s", vmhome, PATHSEPSTR, sshpub);    // sshpub is global
+    sprintf(vmsshpub, "%s%c%s", vmhome, PATHCHAR, sshpub);    // sshpub is global
     sprintf(cmd, "/usr/bin/ssh-keygen -f %s -y > %s", vmsshpri, vmsshpub);
     int rc = system(cmd);
     if (rc == -1) {

@@ -182,7 +182,7 @@ char * baseName(char *path)
 
     int length = strlen(path) - 1;
     char *basename = &path[length];
-    while (*basename != PATHSEPCHAR && length >= 0) {
+    while (*basename != PATHCHAR && length >= 0) {
         --basename;
         --length;
     }

@@ -39,13 +39,7 @@
 
 
 // DEFINES
-#if defined(WIN32) || defined(_WIN32) 
-#define PATHSEPSTR  "\\"
-#define PATHSEPCHAR '\\'
-#else 
-#define PATHSEPSTR  "/"
-#define PATHSEPCHAR '/'
-#endif
+#define PATHCHAR    '/'
 // Syntactic sugar for common API functions
 #define Convert16to8(u16,u8)     (g_pVBoxFuncs->pfnUtf16ToUtf8(u16,u8))
 #define Free8(a)                 (g_pVBoxFuncs->pfnUtf8Free(a))

@@ -26,7 +26,7 @@ void imgCreate(int argc, char *argv[])
 
     // Check if an image with same name already exists
     char imgFile[512] = "";
-    sprintf(imgFile, "%s%s%s", vmhome, PATHSEPSTR, imgName);
+    sprintf(imgFile, "%s%c%s", vmhome, PATHCHAR, imgName);
     if (isFile(imgFile)) {
         fprintf(stderr, "Image file %s already exists.\n", imgFile);
         Exit(EXIT_FAILURE);

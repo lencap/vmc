@@ -109,7 +109,7 @@ void ProvisionConfig(char *provFile)
         ExitIfNull(vmImg, __FILE__, __LINE__);
         strcpy(vmImg, image);
         char vmImgPath[1024] = "";
-        sprintf(vmImgPath, "%s%s%s", vmhome, PATHSEPSTR, vmImg);
+        sprintf(vmImgPath, "%s%c%s", vmhome, PATHCHAR, vmImg);
         if (!isFile(vmImgPath)) {
             fprintf(stderr, "[%s] Image '%s' doesn't exist. Please specify an available image\n",
                 vmName, vmImg);

@@ -45,12 +45,12 @@ void imgList(void)
     printf("%-34s%-8s%s\n", "NAME", "SIZE", "DATE");
     for (int i = 0; i < Count; i++) {
         if ( (strlen(vmhome)+strlen(fList[i])) > 511 ) {
-            fprintf(stderr, "OVA file full path exceeds 512 chars:\n  %s%s%s\n",
-                vmhome, PATHSEPSTR, fList[i]);
+            fprintf(stderr, "OVA file full path exceeds 512 chars:\n  %s%c%s\n",
+                vmhome, PATHCHAR, fList[i]);
             Exit(EXIT_FAILURE);
         }
         char fullPath[512];
-        sprintf(fullPath, "%s%s%s", vmhome, PATHSEPSTR, fList[i]);
+        sprintf(fullPath, "%s%c%s", vmhome, PATHCHAR, fList[i]);
 
         // Calculate file size in megabytes
         char fSize[8] = "";

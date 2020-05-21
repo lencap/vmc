@@ -33,7 +33,7 @@ void imgImport(int argc, char *argv[])
     
     // Check if there is already a file named the same, using baseName
     char targetFile[1024];
-    sprintf(targetFile, "%s%s%s", vmhome, PATHSEPSTR, imgFileBase);
+    sprintf(targetFile, "%s%c%s", vmhome, PATHCHAR, imgFileBase);
     if (isFile(targetFile)) {
         fprintf(stderr, "Image '%s' already exists\n", targetFile);
         Exit(EXIT_FAILURE);

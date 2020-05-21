@@ -19,7 +19,7 @@ void imgDelete(int argc, char *argv[])
     }
 
     char imgFile[512];
-    sprintf(imgFile, "%s%s%s", vmhome, PATHSEPSTR, imgName);
+    sprintf(imgFile, "%s%c%s", vmhome, PATHCHAR, imgName);
     if (!isFile(imgFile)) {
         fprintf(stderr, "No '%s' OVA file.\n", imgFile);
         Exit(EXIT_FAILURE);

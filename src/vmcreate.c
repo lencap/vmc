@@ -28,7 +28,7 @@ void vmCreate(int argc, char *argv[])
     // First, let's presume the registered image's full filepath
     char imgFile[1024];
     char *imageBase = baseName(image);   // Careful, just a pointer, not a new string
-    sprintf(imgFile, "%s%s%s", vmhome, PATHSEPSTR, imageBase);
+    sprintf(imgFile, "%s%c%s", vmhome, PATHCHAR, imageBase);
 
     if (isFile(image) && endsWith(image, ".ova") && isTarFile(image)) {
         // FIRST option: User has given us a proper OVA file
@@ -188,7 +188,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
         if (Types[i] == VirtualSystemDescriptionType_HardDiskImage) {  // 18
             Convert8to16("1024", &VBoxValues[i]);
             char hddpath[512];
-            sprintf(hddpath, "%s%s%s%shd1.vmdk", vbhome, PATHSEPSTR, vmName, PATHSEPSTR);
+            sprintf(hddpath, "%s%c%s%chd1.vmdk", vbhome, PATHCHAR, vmName, PATHCHAR);
             Convert8to16(hddpath, &VBoxValues[i]);
             Convert8to16("controller=6;channel=0", &ExtraConfigValues[i]);
             continue;
@@ -202,8 +202,8 @@ IMachine * CreateVM(char *vmName, char *imgFile)
         // Set SettingsFile path
         if (Types[i] == VirtualSystemDescriptionType_SettingsFile) {  // 24
             char sfilepath[512];
-            sprintf(sfilepath, "%s%s%s%s%s.vbox", vbhome, PATHSEPSTR,
-                vmName, PATHSEPSTR, vmName);
+            sprintf(sfilepath, "%s%c%s%c%s.vbox", vbhome, PATHCHAR,
+                vmName, PATHCHAR, vmName);
             Convert8to16(sfilepath, &VBoxValues[i]);
         }
     }

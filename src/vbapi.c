@@ -51,7 +51,7 @@ void InitGlobalObjects(void) {
     FreeBSTR(vbhome_16);
 
     // Ensure config directory exists.
-    sprintf(vmhome, "%s%s%s", getenv("HOME"), PATHSEPSTR, vmdir);
+    sprintf(vmhome, "%s%c%s", getenv("HOME"), PATHCHAR, vmdir);
     // Note that vmhome and vmdir are GLOBAL variables
     if (!isDir(vmhome)) {
         if (mkdir(vmhome, 0755)) {   // Try creating it, and confirm success
