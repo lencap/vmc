@@ -1,41 +1,24 @@
 // vmc.h
 
-// // These may be a requirement to compile in non-macOS systems
-// #ifndef _POSIX_C_SOURCE
-// #define _POSIX_C_SOURCE
-// #endif
-// #ifndef _BSD_SOURCE
-// #define _BSD_SOURCE
-// #endif
-// #ifndef _GNU_SOURCE
-// #define _GNU_SOURCE
-// #endif
-
 #include "VBoxCAPIGlue.h"
 
-#ifndef WIN32
-# include <signal.h>
-# include <unistd.h>
-# include <sys/poll.h>
-#endif
-#ifdef IPRT_INCLUDED_cdefs_h
-# error "not supposed to involve any IPRT or VBox headers here."
-#endif
-
 #include "ini.h"
+
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/poll.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <time.h>
-#include <stdbool.h>
+#include <unistd.h>
 
 
 // DEFINES
