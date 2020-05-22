@@ -15,7 +15,7 @@ void vmCreate(int argc, char *argv[])
         Exit(EXIT_FAILURE);
     }
 
-    // Lookup VM object
+    // Ensure VM doesn't already exist
     IMachine *vm = GetVM(vmName);
     if (vm) {
         fprintf(stderr, "There's already a VM registered as '%s'\n", vmName);
@@ -25,7 +25,7 @@ void vmCreate(int argc, char *argv[])
     // First, let's find out if the 'image' argument is an OVA file,
     // or the name of one of our registered images.
 
-    // First, let's presume the registered image's full filepath
+    // Start by presuming the wouldbe registered image full filepath
     char imgFile[1024];
     char *imageBase = baseName(image);   // Careful, just a pointer, not a new string
     sprintf(imgFile, "%s%c%s", vmhome, PATHCHAR, imageBase);
@@ -131,7 +131,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
     
     // Also note that the most important value for each type description is whether or
     // not it is ENABLED, and that's a boolean array WE HAVE TO create new ourselves,
-    // separately (that I calling Enabled here), which we will later pass to the
+    // separately (we call it Enabled here), which we will later pass to the
     // IVirtualSystemDescription_SetFinalValues function, to create the VM using this OVA.
 
     // Before we even get started, let's remove any HardDiskControllerIDE types,
@@ -140,7 +140,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
         VirtualSystemDescriptionType_HardDiskControllerIDE);
     ExitIfFailure(rc, "IVirtualSystemDescription_RemoveDescriptionByType", __FILE__, __LINE__);
 
-    // Get the 5 individual VSD arrays that describe our sole sysVSDList[0] VM object
+    // Now get the 5 individual VSD arrays that describe our sole sysVSDList[0] VM object
     ULONG vsdCount = 0;   // Virtual System Description entry index counter
     ULONG *Types            = NULL;
     BSTR *Refs              = NULL;

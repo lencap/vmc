@@ -4,15 +4,16 @@
 #include "vmc.h"
 
 // @todo
-// Allow easy switching/update of username and ssh key
+// Setup keyboard interrupt handler
+// Allow easy switching/update of vmuser username, password, and ssh keys
 // Allow direct file transfer between VMs
 // Allow multiple vmcopy and vmrun
-// Switch from BOOL to #include <stdbool.h> 
+// Don't mess with VMs that were not created by this program
+// Don't allow creation of HO net of any existing host net
 // Use the proper Free8/Free16/FreeBST/free function
-// Don't mess with non-vmc VMs
 
 // Global constants and variables
-const char prgver[]  = "v120";
+const char prgver[]  = "v121";
 const char prgname[] = "vmc";
 const char vmconf[]  = "vm.conf";         // Default provisioning filename
 const char vmdefip[] = "10.11.12.2";      // Default IP address

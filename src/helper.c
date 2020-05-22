@@ -35,12 +35,12 @@ int isFile(const char *path)
 
 
 // Returns 1 IIF the two strings are exactly the same 
-BOOL Equal(const char *str1, const char *str2)
+bool Equal(const char *str1, const char *str2)
 {
-    if (!str1 || !str2) { return FALSE; }
+    if (!str1 || !str2) { return false; }
     // Syntactic sugar reduces useless cognitive load
-    if (strcmp(str1, str2) == 0) { return TRUE; }
-    else { return FALSE; }
+    if (strcmp(str1, str2) == 0) { return true; }
+    else { return false; }
 }
 
 

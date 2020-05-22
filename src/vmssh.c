@@ -43,7 +43,7 @@ int SSHVM(IMachine *vm, char *cmd, bool verbose)
 
     char *ip = GetVMProp(vm, "/vm/ip");
 
-    if (!sshAccess(ip)) {
+    if (!SSHPortOpen(ip)) {
         fprintf(stderr, "VM not reachable over %s:22\n", ip);
         return 1;
     }
@@ -65,7 +65,7 @@ int SSHVM(IMachine *vm, char *cmd, bool verbose)
 
 
 // Returns TRUE if IP is reachable over SSH port 22
-bool sshAccess(char *ip)
+bool SSHPortOpen(char *ip)
 {
     if (!ValidIpStr(ip)) { return false; }
 
@@ -146,7 +146,7 @@ int SCPVM(char *srcPath, char *vmName, char *dstPath, bool verbose)
     sprintf(scp, "%s -o UserKnownHostsFile=/dev/null -i %s", scp, vmsshpri);
 
     char *ip = GetVMProp(vm, "/vm/ip");
-    if (!sshAccess(ip)) {
+    if (!SSHPortOpen(ip)) {
         fprintf(stderr, "Cannot SCP to VM IP '%s' over port 22\n", ip);
         return 1;
     }

@@ -260,7 +260,7 @@ void ProvisionConfig(char *provFile)
 
             // Since the VM may only have started a moment ago, let's give SSH time to be ready
             int delay = 600;
-            while (!sshAccess(vmNetIp) && delay > 0) {
+            while (!SSHPortOpen(vmNetIp) && delay > 0) {
                 usleep(100000);  // Do nothing for .1 second
                 --delay;
             }

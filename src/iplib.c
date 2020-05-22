@@ -65,7 +65,7 @@ char * GetIPNet(const char *ip)
 
 
 // Check if IP is already in use. Skip given vmName
-BOOL UsedIP(char *ip, char *vmName)
+bool UsedIP(char *ip, char *vmName)
 {
     // Update in-memory list of VM if it's empty
     if (!VMList) { UpdateVMList(); }
@@ -89,7 +89,7 @@ BOOL UsedIP(char *ip, char *vmName)
         char *tmpip = GetVMProp(VMList[i], "/vm/ip");
         if (Equal(tmpip, ip)) {
             free(tmpip);        
-            return TRUE;
+            return true;
         }
         free(tmpip);
     }
@@ -97,12 +97,12 @@ BOOL UsedIP(char *ip, char *vmName)
     // Check if IP could also be in use by something other than one our VMs
     //if (ActiveIP(ip)) { return TRUE; } // DISABLED: See comments in ActiveIP()
     
-    return FALSE;
+    return false;
 }
 
 
 // Check if IP is active by doing simple ping 
-BOOL ActiveIP(char *ip)
+bool ActiveIP(char *ip)
 {
     // On second thought, let's not use this function. It slows things down a bit too much,
     // so let's put the onus back on the user to allocate IP addresses correctly. We could
@@ -119,6 +119,6 @@ BOOL ActiveIP(char *ip)
         fprintf(stderr, "Error running: %s\n", cmd);
         Exit(EXIT_FAILURE);
     }
-    if (rc == 0) { return TRUE; }
-    return FALSE;
+    if (rc == 0) { return true; }
+    return false;
 }

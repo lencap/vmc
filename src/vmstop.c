@@ -78,7 +78,6 @@ bool StopVM(IMachine *vm)
 
         HRESULT rc = IConsole_PowerDown(console, &progress);
         HandleProgress(progress, rc, -1);
-        // Is another timeout delay here necessary?
 
         CloseSession(session);
     }
@@ -91,8 +90,8 @@ bool StopVM(IMachine *vm)
     }
 
     if (VMState(vm) == MachineState_Running) {
-        // Future bug: There's an unlikely chance we'll get here.
-        // May need additional ways to ensure it is shuttered
+        fprintf(stderr, "Future bug has arrived. Couldn't stop VM.\n"
+            "Need additional ways to ensure VM is indeed shuttered\n");
         return false;
     }
     return true;

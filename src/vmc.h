@@ -87,7 +87,7 @@ void Exit(int rc);
 // helper.c
 int isDir(const char *path);
 int isFile(const char *path);
-BOOL Equal(const char *str1, const char *str2);
+bool Equal(const char *str1, const char *str2);
 void Lower(char *str);
 bool endsWith(const char *str1, const char *str2);
 void argCopy(char *name, int length, char *arg);
@@ -116,8 +116,8 @@ void SetVMProp(IMachine *vm, char *path, const char *value);
 char * NextUniqueIP(const char *ip);
 int ValidIpStr(const char *ipString);
 char * GetIPNet(const char *ipStr);
-BOOL UsedIP(char *ip, char *vmName);
-BOOL ActiveIP(char *ip);
+bool UsedIP(char *ip, char *vmName);
+bool ActiveIP(char *ip);
 
 // netlist.c
 void netList(void);
@@ -131,7 +131,7 @@ char * CreateHONIC(char *ip);
 // vmssh.c
 int vmSSH(int argc, char *argv[]);
 int SSHVM(IMachine *vm, char *cmd, bool verbose);
-bool sshAccess(char *ip);
+bool SSHPortOpen(char *ip);
 int SCPVM(char *srcPath, char *vmName, char *dstPath, bool verbose);
 
 // vmstop.c
