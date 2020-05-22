@@ -97,7 +97,7 @@ void GetNICList(IHostNetworkInterface ***List, ULONG *Count)
 
 
 // Get this host's main NIC
-char * getHostMainNIC(void)
+char * GetHostMainNIC(void)
 {
     // WARNING!
     // OS DEPENDENT! Assumes Apple macOS, where main NIC names start with 'en'

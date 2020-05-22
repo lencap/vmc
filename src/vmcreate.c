@@ -75,7 +75,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
 
     // Check for list of warnings during OVA interpretation of appliance
     ULONG warnCount = 0;
-    BSTR *warnings = getWarningsList(appliance, &warnCount);
+    BSTR *warnings = GetWarningsList(appliance, &warnCount);
     for (int i = 0; i < warnCount; ++i) {
         char *warn;
         Convert16to8(warnings[i], &warn);
@@ -291,7 +291,7 @@ IMachine * CreateVM(char *vmName, char *imgFile)
 
 
 // Get list of warning messages from OVA interpretation appliance
-BSTR * getWarningsList(IAppliance *appliance, ULONG *Count)
+BSTR * GetWarningsList(IAppliance *appliance, ULONG *Count)
 {
     // Temp safe array to get list of these objects
     SAFEARRAY *SA = SAOutParamAlloc();

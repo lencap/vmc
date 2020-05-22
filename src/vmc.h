@@ -122,7 +122,7 @@ bool ActiveIP(char *ip);
 // netlist.c
 void netList(void);
 void GetNICList(IHostNetworkInterface ***List, ULONG *Count);
-char * getHostMainNIC(void);
+char * GetHostMainNIC(void);
 
 // netadd.c
 void netAdd(int argc, char *argv[]);
@@ -140,16 +140,14 @@ bool StopVM(IMachine *vm);
 
 // vminfo.c
 int vmInfo(int argc, char *argv[]);
-int printStorageControllers(IMachine *vm);
-IStorageController ** getCtlrList(IMachine *vm, ULONG *Count);
-
-// vminfo-media.c
-int printMediaAttachments(IMachine *vm);
-IMediumAttachment ** getMAList(IMachine *vm, ULONG *Count);
-
-// vminfo-folders.c
-int printSharedFolders(IMachine *vm);
-ISharedFolder ** getSFList(IMachine *vm, ULONG *Count);
+int PrintStorageControllers(IMachine *vm);
+IStorageController ** GetCtlrList(IMachine *vm, ULONG *Count);
+int PrintMediaAttachments(IMachine *vm);
+IMediumAttachment ** GetMAList(IMachine *vm, ULONG *Count);
+int PrintSharedFolders(IMachine *vm);
+ISharedFolder **GetSFList(IMachine *vm, ULONG *Count);
+int PrintNetworkAdapters(IMachine *vm);
+int PrintGAProperties(IMachine *vm);
 
 // nettype.c
 void netType(int argc, char *argv[]);
@@ -158,7 +156,7 @@ bool SetVMNetType(IMachine *vm, char *nettype);
 // vmcreate.c
 void vmCreate(int argc, char *argv[]);
 IMachine * CreateVM(char *vmName, char *imgFile);
-BSTR * getWarningsList(IAppliance *appliance, ULONG *Count);
+BSTR * GetWarningsList(IAppliance *appliance, ULONG *Count);
 IVirtualSystemDescription ** GetSysVSDList(IAppliance *appliance, ULONG *Count);
 void GetVSDArrays(IVirtualSystemDescription *sysDesc, ULONG *Count, ULONG **List1,
     BSTR **List2, BSTR **List3, BSTR **List4, BSTR **List5);
@@ -192,5 +190,3 @@ void imgPack(void);
 void imgDelete(int argc, char *argv[]);
 void imgImport(int argc, char *argv[]);
 void netDel(int argc, char *argv[]);
-int printNetworkAdapters(IMachine *vm);
-int printGuestAdditionProps(IMachine *vm);

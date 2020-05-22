@@ -13,7 +13,7 @@
 // Use the proper Free8/Free16/FreeBST/free function
 
 // Global constants and variables
-const char prgver[]  = "v121";
+const char prgver[]  = "v122";
 const char prgname[] = "vmc";
 const char vmconf[]  = "vm.conf";         // Default provisioning filename
 const char vmdefip[] = "10.11.12.2";      // Default IP address

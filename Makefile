@@ -1,5 +1,5 @@
 TARGET     := vmc
-VERSION    := 121
+VERSION    := 122
 SRCDIR     := src
 BUILDDIR   := bld
 

@@ -85,7 +85,7 @@ bool SetVMIP(IMachine *vm, char *ip)
         INetworkAdapter_SetAttachmentType(nic1, NetworkAttachmentType_Bridged);
 
         // Find and use host's main NIC to bridge to
-        char *mainNIC = getHostMainNIC();
+        char *mainNIC = GetHostMainNIC();
         BSTR mainNIC_16;
         Convert8to16(mainNIC, &mainNIC_16);
 
