@@ -13,7 +13,7 @@ void PrintUsage(void)
         "%s stop      <vmName> [f]                 Stop VM. Force option\n"
         "%s ssh       <vmName> [<cmd arg>]         SSH into or optionally run command on VM\n"
         "%s prov      [<vmConf>|c]                 Provision VMs in given vmConf file; Create skeleton file option\n"
-        "%s info      <vmName>                     Dump subset of all VM details for common troubleshooting\n"
+        "%s info      <vmName>                     Dump extended VM details\n"
         "%s mod       <vmName> <cpus> [<mem>]      Modify VM CPUs and memory. Memory defaults to 1024\n"
         "%s ip        <vmName> <ip>                Set VM IP address\n"
         "%s imglist                                List all available images\n"

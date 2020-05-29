@@ -11,6 +11,8 @@
 // Don't mess with VMs that were not created by this program
 // Don't allow creation of HO net of any existing host net
 // Use the proper Free8/Free16/FreeBST/free function
+// Combine vmmod and vmip
+// bug: vmcreate using img from any folder
 
 // Global constants and variables
 const char prgver[]  = "v122";
